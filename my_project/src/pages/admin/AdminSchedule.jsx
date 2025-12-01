@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
+import { Button, Spinner, Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../../axiosInstance';
 import '../Schedule.css';
@@ -50,15 +50,10 @@ const AdminSchedule = () => {
 
   return (
     <Container className="my-5">
-      {/* Header + ปุ่มเพิ่ม */}
-      <Row className="align-items-center mb-3">
+      {/* Header */}
+      <Row className="mb-3">
         <Col>
           <h2>📅 จัดการตารางเวลา</h2>
-        </Col>
-        <Col className="text-end">
-          <Button as={Link} to="/admin/schedule/create" variant="success">
-            + เพิ่มตารางเวลา
-          </Button>
         </Col>
       </Row>
 
@@ -70,15 +65,8 @@ const AdminSchedule = () => {
         </div>
       )}
 
-      {/* Empty state */}
-      {!loading && classes.length === 0 && (
-        <Alert variant="warning" className="text-center">
-          📭 ยังไม่มีตารางคลาส
-        </Alert>
-      )}
-
       {/* ตาราง */}
-      {!loading && classes.length > 0 && (
+      {!loading && (
         <table className="schedule-table table table-bordered shadow-sm">
           <thead className="table-light">
             <tr>
@@ -95,29 +83,46 @@ const AdminSchedule = () => {
                 {times.map((time) => {
                   const cls = getClassForSlot(day, time);
                   return (
-                    <td key={time} className={cls ? cls.class_type?.toLowerCase() : ''}>
-                      {cls && (
-                        <div className="d-flex flex-column align-items-start">
-                          <span>{cls.name}</span>
-                          <div className="d-flex gap-1 mt-1">
+                    <td key={time} className={cls ? cls.class_type?.toLowerCase() : 'empty-slot'}>
+                      <div className="d-flex flex-column align-items-start">
+                        {cls ? (
+                          <>
+                            <span>{cls.name}</span>
+                            <div className="d-flex gap-1 mt-1">
+                              {/* ปุ่มแก้ไข → ไปหน้า CreateSchedule.jsx */}
+                              <Button
+                                as={Link}
+                                to={`/admin/schedule/create?mode=edit&id=${cls.schedule_id}`}
+                                size="sm"
+                                variant="warning"
+                              >
+                                แก้ไข
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="danger"
+                                onClick={() => handleDelete(cls.schedule_id)}
+                              >
+                                ลบ
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-muted">ยังไม่มีคลาส</span>
+                            {/* ปุ่มเพิ่ม → ไปหน้า CreateSchedule.jsx */}
                             <Button
                               as={Link}
-                              to={`/admin/schedule/edit/${cls.schedule_id}`}
+                              to={`/admin/schedule/create?mode=add&day=${day}&time=${time}`}
                               size="sm"
-                              variant="warning"
+                              variant="success"
+                              className="mt-1"
                             >
-                              แก้ไข
+                              เพิ่มคลาส
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="danger"
-                              onClick={() => handleDelete(cls.schedule_id)}
-                            >
-                              ลบ
-                            </Button>
-                          </div>
-                        </div>
-                      )}
+                          </>
+                        )}
+                      </div>
                     </td>
                   );
                 })}

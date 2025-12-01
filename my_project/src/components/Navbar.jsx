@@ -46,7 +46,21 @@ const Navigation = () => {
             <Nav.Link as={Link} to="/schedule" className={`nav-link special-font ${isActive("/schedule") ? "active-link" : ""}`}>ตารางเวลา</Nav.Link>
             <Nav.Link as={Link} to="/news" className={`nav-link special-font ${isActive("/news") ? "active-link" : ""}`}>ข่าวสาร</Nav.Link>
             <Nav.Link as={Link} to="/package" className={`nav-link special-font ${isActive("/package") ? "active-link" : ""}`}>สมาชิก</Nav.Link>
-
+            <Nav.Link as={Link} to="/profile" className="p-0 ms-3">
+              <img
+                src="/images/user-icon.png"
+                alt="profile"
+                className="profile-icon"
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "2px solid #ffc107",
+                  cursor: "pointer"
+                }}
+              />
+            </Nav.Link>
             {isAdmin && (
               <>
                 <Nav.Link

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import './login.css'; 
+import './login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,10 +30,11 @@ const Login = () => {
 
         // ✅ เช็ค role ของ user
         if (data.user.role === "admin") {
-          window.location.href = '/admin/news';
+          window.location.href = '/admin'; // แก้จาก /admin/news → /admin
         } else {
           window.location.href = '/user/home';
         }
+
       }
     } catch (err) {
       setError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
@@ -41,12 +42,12 @@ const Login = () => {
   };
 
   return (
-    <div 
-      className="d-flex justify-content-center align-items-center vh-100 login-bg" 
+    <div
+      className="d-flex justify-content-center align-items-center vh-100 login-bg"
       style={{ backgroundImage: 'url(/images/lgbackground.jpg)' }}
     >
-      <div 
-        className="card shadow-lg p-5 rounded-4" 
+      <div
+        className="card shadow-lg p-5 rounded-4"
         style={{ maxWidth: "500px", width: "100%", backgroundColor: "rgba(255,255,255,0.85)", position: "relative", zIndex: 1 }}
       >
         <h2 className="text-center mb-4 text-primary" style={{ fontSize: "2rem" }}>เข้าสู่ระบบ</h2>
@@ -56,25 +57,25 @@ const Login = () => {
 
           <div className="mb-4">
             <label className="form-label" style={{ fontSize: "1.1rem" }}>อีเมล</label>
-            <input 
-              type="email" 
-              className="form-control form-control-lg" 
-              placeholder="example@email.com" 
+            <input
+              type="email"
+              className="form-control form-control-lg"
+              placeholder="example@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required 
+              required
             />
           </div>
 
           <div className="mb-4">
             <label className="form-label" style={{ fontSize: "1.1rem" }}>รหัสผ่าน</label>
-            <input 
-              type="password" 
-              className="form-control form-control-lg" 
-              placeholder="กรอกรหัสผ่าน" 
+            <input
+              type="password"
+              className="form-control form-control-lg"
+              placeholder="กรอกรหัสผ่าน"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required 
+              required
             />
           </div>
 

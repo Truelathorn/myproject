@@ -6,14 +6,20 @@ import Schedule from './pages/Schedule';
 import Login from './pages/Login';
 import SignIn from './pages/SignIn';
 import Packages from './pages/package';
+import Myprofile from './pages/Myprofile';
+import Membership from  "./pages/Membership";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
+
 // หน้า Admin
+import DashBoard from './pages/admin/DashBoard';
 import AdminNews from './pages/admin/AdminNews';
 import CreateNews from './pages/admin/CreateNews';
 import EditNews from './pages/admin/EditNews';
-import AdminSchedule from './pages/admin/AdminSchedule'; // ✅ เพิ่มตรงนี้
+import AdminSchedule from './pages/admin/AdminSchedule';
+import CreateSchedule from './pages/admin/CreateSchedule';
+import AdminPackage from './pages/admin/AdminPackage';
 
 // PrivateRoute
 import PrivateRoute from './components/PrivateRoute';
@@ -45,7 +51,32 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signin" element={<SignIn />} />
 
+          {/* หน้า User protected ด้วย PrivateRoute */}
+          <Route
+            path="/Myprofile"
+            element={
+              <PrivateRoute roleRequired="user">
+                <Myprofile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/membership"
+            element={
+              <PrivateRoute roleRequired="user">
+                <Membership />
+              </PrivateRoute>
+            }
+          />
           {/* หน้า Admin News protected ด้วย PrivateRoute */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <DashBoard />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/admin/news"
             element={
@@ -80,19 +111,29 @@ function App() {
               </PrivateRoute>
             }
           />
+          {/* CreateSchedule ใช้สำหรับเพิ่มและแก้ไข */}
           <Route
             path="/admin/schedule/create"
             element={
               <PrivateRoute roleRequired="admin">
-                {/* คุณสามารถสร้างหน้า CreateSchedule */}
+                <CreateSchedule />
               </PrivateRoute>
             }
           />
+
           <Route
             path="/admin/schedule/edit/:id"
             element={
               <PrivateRoute roleRequired="admin">
                 {/* คุณสามารถสร้างหน้า EditSchedule */}
+              </PrivateRoute>
+            }
+          />
+        <Route
+            path="/admin/packages"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <AdminPackage />
               </PrivateRoute>
             }
           />

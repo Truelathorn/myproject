@@ -37,7 +37,7 @@ function App() {
             element={
               <>
                 <Sliceshow />
-                <News limit={3} />
+                <News limit={3} hideFilter={true} />
                 <Schedule />
               </>
             }

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import "./package.css";
 
 const Packages = () => {
   const [packages, setPackages] = useState({});
+
+   const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8080/api/v1/packages")
@@ -107,6 +110,13 @@ const Packages = () => {
             </Row>
           </div>
         ))}
+        <Button
+          variant="dark"
+          className="px-4 py-2 rounded-pill"
+          onClick={() => navigate("/packageinfo")}
+        >
+          Mock
+        </Button>
       </Container>
     </div>
   );

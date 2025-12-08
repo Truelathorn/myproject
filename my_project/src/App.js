@@ -9,6 +9,7 @@ import Packages from './pages/package';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Profile from './pages/Profile';
+import PackageInfo from './pages/packageinfo';
 
 // หน้า Admin
 import DashBoard from './pages/admin/DashBoard'; // ✅ Dashboard
@@ -48,6 +49,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/packageinfo" element={<PackageInfo />} />
 
           {/* หน้า Admin protected ด้วย PrivateRoute */}
           {/* ✅ หน้าแรกของ admin เป็น Dashboard */}
@@ -105,7 +107,7 @@ function App() {
             }
           />
         </Routes>
-       <Footer />
+        <Footer />
       </div>
     </Router>
   );

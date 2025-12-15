@@ -65,7 +65,7 @@ function App() {
           <Route
             path="/membership"
             element={
-              <PrivateRoute roleRequired="user">
+              <PrivateRoute roleRequired="admin">
                 <Membership />
               </PrivateRoute>
             }

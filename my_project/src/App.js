@@ -6,18 +6,22 @@ import Schedule from './pages/Schedule';
 import Login from './pages/Login';
 import SignIn from './pages/SignIn';
 import Packages from './pages/package';
+import Myprofile from './pages/Myprofile';
+import Membership from  "./pages/Membership";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Profile from './pages/Profile';
-import PackageInfo from './pages/packageinfo';
+
 
 // หน้า Admin
-import DashBoard from './pages/admin/DashBoard'; // ✅ Dashboard
+import DashBoard from './pages/admin/DashBoard';
 import AdminNews from './pages/admin/AdminNews';
 import CreateNews from './pages/admin/CreateNews';
 import EditNews from './pages/admin/EditNews';
 import AdminSchedule from './pages/admin/AdminSchedule';
-import CreateSchedule from './pages/admin/CreateSchedule'; // ✅ เพิ่ม CreateSchedule
+import CreateSchedule from './pages/admin/CreateSchedule';
+import AdminPackage from './pages/admin/AdminPackage';
+import AdminUserList from './pages/admin/AdminUserList';
+import AdminCreateUser from './pages/admin/AdminCreateUser';
 
 // PrivateRoute
 import PrivateRoute from './components/PrivateRoute';
@@ -37,7 +41,7 @@ function App() {
             element={
               <>
                 <Sliceshow />
-                <News limit={3} hideFilter={true} />
+                <News limit={3} />
                 <Schedule />
               </>
             }
@@ -48,21 +52,49 @@ function App() {
           <Route path="/package" element={<Packages />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/packageinfo" element={<PackageInfo />} />
 
-          {/* หน้า Admin protected ด้วย PrivateRoute */}
-          {/* ✅ หน้าแรกของ admin เป็น Dashboard */}
+          {/* หน้า User protected ด้วย PrivateRoute */}
           <Route
-            path="/admin"
+            path="/Myprofile"
+            element={
+              <PrivateRoute roleRequired="user">
+                <Myprofile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/membership"
+            element={
+              <PrivateRoute roleRequired="user">
+                <Membership />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <AdminUserList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/users/create"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <AdminCreateUser />
+              </PrivateRoute>
+            }
+          />
+          {/* หน้า Admin News protected ด้วย PrivateRoute */}
+          <Route
+            path="/admin/dashboard"
             element={
               <PrivateRoute roleRequired="admin">
                 <DashBoard />
               </PrivateRoute>
             }
           />
-
-          {/* Admin News */}
           <Route
             path="/admin/news"
             element={
@@ -88,7 +120,7 @@ function App() {
             }
           />
 
-          {/* Admin Schedule */}
+          {/* หน้า Admin Schedule protected ด้วย PrivateRoute */}
           <Route
             path="/admin/schedule"
             element={
@@ -106,8 +138,25 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          <Route
+            path="/admin/schedule/edit/:id"
+            element={
+              <PrivateRoute roleRequired="admin">
+                {/* คุณสามารถสร้างหน้า EditSchedule */}
+              </PrivateRoute>
+            }
+          />
+        <Route
+            path="/admin/packages"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <AdminPackage />
+              </PrivateRoute>
+            }
+          />
         </Routes>
-        <Footer />
+       <Footer />
       </div>
     </Router>
   );

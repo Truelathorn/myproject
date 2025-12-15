@@ -7,33 +7,50 @@ const CreateNews = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [type, setType] = useState('general'); // ✅ ประเภทข่าว
-  const [publishDate, setPublishDate] = useState(''); // ✅ วันที่เผยแพร่
+  const [preview, setPreview] = useState(null);
+  const [type, setType] = useState('general');
+  const [publishDate, setPublishDate] = useState('');
   const navigate = useNavigate();
 
+  // ⬆️ เมื่อเลือกรูป จะ Preview และแปลงเป็น Base64 (หรือจะอัปโหลดไป API ก็ได้)
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+      setImageUrl(reader.result); // ส่ง base64 ไปเก็บใน backend
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // ✅ แปลง publishDate เป็น ISO 8601 (UTC)
-  const formattedDate = new Date(publishDate).toISOString().split('.')[0] + 'Z';
-  // ตัวอย่างผลลัพธ์ → "2025-10-13T00:00:00Z"
+    const formattedDate =
+      new Date(publishDate).toISOString().split('.')[0] + 'Z';
 
-  try {
-    await axiosInstance.post('/news', {
-      title,
-      content,
-      image_url: imageUrl,
-      type,
-      publish_date: formattedDate, // ✅ ส่งค่าแบบ ISO
-    });
+    try {
+      await axiosInstance.post(
+        '/news',
+        {
+          title,
+          content,
+          image_url: imageUrl,
+          type,
+          publish_date: formattedDate,
+        },
+        { withCredentials: true }
+      );
 
-    alert('เพิ่มข่าวเรียบร้อยแล้ว');
-    navigate('/admin/news');
-  } catch (err) {
-    console.error('เพิ่มข่าวล้มเหลว:', err.response?.data || err.message);
-    alert('เกิดข้อผิดพลาดในการเพิ่มข่าว');
-  }
-};
+      alert('เพิ่มข่าวเรียบร้อยแล้ว');
+      navigate('/admin/news');
+    } catch (err) {
+      console.error('เพิ่มข่าวล้มเหลว:', err.response?.data || err.message);
+      alert('เกิดข้อผิดพลาดในการเพิ่มข่าว');
+    }
+  };
 
   return (
     <Container className="my-5">
@@ -43,7 +60,9 @@ const CreateNews = () => {
             <Card.Body>
               <Card.Title className="mb-4">เพิ่มข่าว</Card.Title>
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="newsTitle">
+
+                {/* TITLE */}
+                <Form.Group className="mb-3">
                   <Form.Label>หัวข้อ</Form.Label>
                   <Form.Control
                     type="text"
@@ -54,29 +73,37 @@ const CreateNews = () => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="newsContent">
+                {/* IMAGE UPLOAD */}
+                <Form.Group className="mb-3">
+                  <Form.Label>เลือกรูปภาพ</Form.Label>
+                  <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
+                </Form.Group>
+
+                {preview && (
+                  <div className="mb-3 text-center">
+                    <img
+                      src={preview}
+                      alt="preview"
+                      style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }}
+                    />
+                  </div>
+                )}
+
+                {/* CONTENT */}
+                <Form.Group className="mb-3">
                   <Form.Label>เนื้อหา</Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={5}
-                    placeholder="กรอกเนื้อหาข่าว"
+                    rows={8}
+                    placeholder="พิมพ์เนื้อหา… "
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-4" controlId="newsImage">
-                  <Form.Label>URL รูปภาพ</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="กรอก URL รูปภาพ (ถ้ามี)"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="newsType">
+                {/* TYPE */}
+                <Form.Group className="mb-3">
                   <Form.Label>ประเภทข่าว</Form.Label>
                   <Form.Select
                     value={type}
@@ -88,8 +115,8 @@ const CreateNews = () => {
                   </Form.Select>
                 </Form.Group>
 
-                {/* ✅ ฟิลด์วันที่เผยแพร่ */}
-                <Form.Group className="mb-3" controlId="newsDate">
+                {/* PUBLISH DATE */}
+                <Form.Group className="mb-3">
                   <Form.Label>วันที่เผยแพร่</Form.Label>
                   <Form.Control
                     type="date"
@@ -99,17 +126,16 @@ const CreateNews = () => {
                   />
                 </Form.Group>
 
+                {/* BUTTONS */}
                 <div className="d-flex justify-content-end gap-2">
-                  <Button 
-                    variant="secondary" 
-                    onClick={() => navigate('/admin/news')}
-                  >
+                  <Button variant="secondary" onClick={() => navigate('/admin/news')}>
                     ยกเลิก
                   </Button>
                   <Button variant="primary" type="submit">
                     บันทึก
                   </Button>
                 </div>
+
               </Form>
             </Card.Body>
           </Card>

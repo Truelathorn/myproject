@@ -26,6 +26,7 @@ func SetupRoutes(r *gin.Engine) {
         class := api.Group("/classes")
         {
             class.GET("", controllers.GetClasses)
+            class.GET("/names", controllers.GetUniqueClassNames)
         }
         packages := api.Group("/packages")
             {
@@ -38,25 +39,40 @@ func SetupRoutes(r *gin.Engine) {
             // 👤 User routes
             user := protected.Group("/users")
             {
-                user.GET("", controllers.GetUsers)
+                user.GET("/me", controllers.GetCurrentUser)
             }
 
             // 📰 News (เฉพาะ admin)
             newsAdmin := protected.Group("/news")
-            newsAdmin.Use(middleware.AuthMiddleware())
+            newsAdmin.Use(middleware.RequireRoles("admin"))
             {
-                news.POST("", controllers.CreateNews)
-                news.PUT("/:id", controllers.UpdateNews)     // ✅ update
-                news.DELETE("/:id", controllers.DeleteNews)
+                newsAdmin.POST("", controllers.CreateNews)
+                newsAdmin.PUT("/:id", controllers.UpdateNews)     // ✅ update
+                newsAdmin.DELETE("/:id", controllers.DeleteNews)
             }
+            admin := protected.Group("/admin")
+            admin.Use(middleware.RequireRoles("admin"))
+            {       
+            admin.GET("/users", controllers.GetUsers)
+            //admin.PUT("/users/:id", controllers.UpdateUser)
+            //admin.DELETE("/users/:id", controllers.DeleteUser)
+            }   
 
             // 🏋️‍♂️ Classes (admin, fitness_staff)
             classAdmin := protected.Group("/classes")
-            classAdmin.Use(middleware.RequireRoles("admin", "fitness_staff"))
+            classAdmin.Use(middleware.RequireRoles("admin"))
             {
                 classAdmin.POST("", controllers.CreateClass)
+                classAdmin.PUT("/:id", controllers.UpdateClass)
+                classAdmin.DELETE("/:id", controllers.DeleteClass)
             }
-
+            packagesAdmin := protected.Group("/packages")
+            packagesAdmin.Use(middleware.RequireRoles("admin"))
+            {
+                packagesAdmin.POST("", controllers.CreatePackage)
+                packagesAdmin.PUT("/:id", controllers.UpdatePackage)
+                packagesAdmin.DELETE("/:id", controllers.DeletePackage)
+            }
             // 💳 Memberships (เฉพาะ admin)
             membership := protected.Group("/memberships")
             membership.Use(middleware.RequireRoles("admin"))

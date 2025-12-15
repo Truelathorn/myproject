@@ -8,13 +8,14 @@ const AdminSchedule = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // โหลดข้อมูลคลาสจาก backend
   const fetchClasses = async () => {
     try {
-      const res = await axiosInstance.get('/classes');
+      const res = await axiosInstance.get('/classes', { withCredentials: true });
       setClasses(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
     } catch (err) {
-      console.error('Failed to fetch classes:', err);
+      console.error('❌ โหลดข้อมูลคลาสล้มเหลว:', err);
       setClasses([]);
       setLoading(false);
       if (err.response?.status === 401) window.location.href = '/login';
@@ -25,16 +26,16 @@ const AdminSchedule = () => {
     fetchClasses();
   }, []);
 
+  // ลบคลาส
   const handleDelete = async (id) => {
-    if (window.confirm('คุณต้องการลบตารางเวลานี้หรือไม่?')) {
-      try {
-        await axiosInstance.delete(`/schedules/${id}`);
-        alert('ลบตารางเวลาเรียบร้อยแล้ว');
-        fetchClasses();
-      } catch (err) {
-        console.error('ลบตารางเวลาล้มเหลว:', err);
-        if (err.response?.status === 401) window.location.href = '/login';
-      }
+    if (!window.confirm('คุณต้องการลบคลาสนี้หรือไม่?')) return;
+    try {
+      await axiosInstance.delete(`/classes/${id}`, { withCredentials: true });
+      alert('🗑️ ลบคลาสเรียบร้อยแล้ว');
+      fetchClasses();
+    } catch (err) {
+      console.error('❌ ลบคลาสล้มเหลว:', err);
+      if (err.response?.status === 401) window.location.href = '/login';
     }
   };
 
@@ -52,21 +53,21 @@ const AdminSchedule = () => {
     <Container className="my-5">
       {/* Header */}
       <Row className="mb-3">
-        <Col>
-          <h2>📅 จัดการตารางเวลา</h2>
+        <Col className="d-flex justify-content-between align-items-center">
+          <h2>📅 จัดการตารางคลาส</h2>
+          <Button variant="success" onClick={fetchClasses}>
+            🔄 โหลดข้อมูลใหม่
+          </Button>
         </Col>
       </Row>
 
-      {/* Loading */}
-      {loading && (
+      {/* Loading state */}
+      {loading ? (
         <div className="text-center my-5">
           <Spinner animation="border" variant="warning" />
           <p className="mt-2 text-muted">⏳ กำลังโหลดตาราง...</p>
         </div>
-      )}
-
-      {/* ตาราง */}
-      {!loading && (
+      ) : (
         <table className="schedule-table table table-bordered shadow-sm">
           <thead className="table-light">
             <tr>
@@ -83,34 +84,39 @@ const AdminSchedule = () => {
                 {times.map((time) => {
                   const cls = getClassForSlot(day, time);
                   return (
-                    <td key={time} className={cls ? cls.class_type?.toLowerCase() : 'empty-slot'}>
+                    <td
+                      key={time}
+                      className={cls ? cls.class_type?.toLowerCase() : 'empty-slot'}
+                    >
                       <div className="d-flex flex-column align-items-start">
                         {cls ? (
                           <>
-                            <span>{cls.name}</span>
-                            <div className="d-flex gap-1 mt-1">
-                              {/* ปุ่มแก้ไข → ไปหน้า CreateSchedule.jsx */}
+                            <span className="fw-semibold">{cls.name}</span>
+                            <div className="d-flex gap-1 mt-2">
+                              {/* แก้ไขคลาส */}
                               <Button
                                 as={Link}
-                                to={`/admin/schedule/create?mode=edit&id=${cls.schedule_id}`}
+                                to={`/admin/schedule/create?mode=edit&id=${cls.class_id}`}
                                 size="sm"
                                 variant="warning"
                               >
-                                แก้ไข
+                                ✏️ แก้ไข
                               </Button>
+
+                              {/* ลบคลาส */}
                               <Button
                                 size="sm"
                                 variant="danger"
-                                onClick={() => handleDelete(cls.schedule_id)}
+                                onClick={() => handleDelete(cls.class_id)}
                               >
-                                ลบ
+                                🗑️ ลบ
                               </Button>
                             </div>
                           </>
                         ) : (
                           <>
                             <span className="text-muted">ยังไม่มีคลาส</span>
-                            {/* ปุ่มเพิ่ม → ไปหน้า CreateSchedule.jsx */}
+                            {/* เพิ่มคลาส */}
                             <Button
                               as={Link}
                               to={`/admin/schedule/create?mode=add&day=${day}&time=${time}`}
@@ -118,7 +124,7 @@ const AdminSchedule = () => {
                               variant="success"
                               className="mt-1"
                             >
-                              เพิ่มคลาส
+                              ➕ เพิ่มคลาส
                             </Button>
                           </>
                         )}

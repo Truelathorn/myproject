@@ -42,7 +42,7 @@ function App() {
               <>
                 <Sliceshow />
                 <News limit={3} hideFilter={true} />
-                <Schedule />
+                <Schedule showGuide={false} />
               </>
             }
           />

@@ -21,7 +21,7 @@ export default function PackageInfo() {
         {/* Left — Upload Document */}
         <Col md={6}>
           <Card className="shadow-sm p-3" style={{ borderRadius: "16px" }}>
-            <h5 className="mb-3">อัปโหลดเอกสาร</h5>
+            <h5 className="mb-3">เอกสาร</h5>
             <div
               style={{
                 width: "100%",

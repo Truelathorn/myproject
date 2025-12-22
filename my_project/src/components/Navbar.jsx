@@ -81,6 +81,10 @@ const Navigation = () => {
                       <i className="bi bi-speedometer2 me-2"></i> Dashboard Admin
                     </NavDropdown.Item>
 
+                    <NavDropdown.Item as={Link} to="/admin/setting">
+                      <i className="bi bi-speedometer2 me-2"></i> System Setting
+                    </NavDropdown.Item>
+
                     <NavDropdown.Divider />
                   </>
                 )}

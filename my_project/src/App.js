@@ -22,7 +22,7 @@ import CreateSchedule from './pages/admin/CreateSchedule';
 import AdminPackage from './pages/admin/AdminPackage';
 import AdminUserList from './pages/admin/AdminUserList';
 import AdminCreateUser from './pages/admin/AdminCreateUser';
-
+import AdminSettings from './pages/admin/AdminSetting';
 // PrivateRoute
 import PrivateRoute from './components/PrivateRoute';
 
@@ -155,6 +155,15 @@ function App() {
               </PrivateRoute>
             }
           />
+          {/* Admin Setting */}
+          <Route
+            path="/admin/setting"
+            element={
+              <PrivateRoute roleRequired="admin">
+                <AdminSettings />
+              </PrivateRoute>
+            }
+          /> 
         </Routes>
        <Footer />
       </div>

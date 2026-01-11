@@ -49,7 +49,6 @@ const AdminNews = () => {
         </Col>
       </Row>
 
-
       {newsList.length === 0 ? (
         <Alert variant="info">ยังไม่มีข่าว</Alert>
       ) : (

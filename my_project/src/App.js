@@ -42,6 +42,7 @@ function App() {
               <>
                 <Sliceshow />
                 <News limit={3} hideFilter={true} />
+                
                 <Schedule showGuide={false} />
               </>
             }
@@ -155,15 +156,14 @@ function App() {
               </PrivateRoute>
             }
           />
-          {/* Admin Setting */}
-          <Route
-            path="/admin/setting"
+        <Route
+            path="/admin/settings"
             element={
               <PrivateRoute roleRequired="admin">
                 <AdminSettings />
               </PrivateRoute>
             }
-          /> 
+          />
         </Routes>
        <Footer />
       </div>

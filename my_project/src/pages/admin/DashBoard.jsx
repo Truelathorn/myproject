@@ -36,7 +36,6 @@ const DashBoard = () => {
       });
 
       setUserByType([
-        { name: 'User ธรรมดา', value: 120 },
         { name: 'นักศึกษา', value: 95 },
         { name: 'บุคลากรภายใน', value: 42 },
         { name: 'บุคคลภายนอก', value: 38 },

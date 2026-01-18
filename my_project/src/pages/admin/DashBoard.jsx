@@ -7,14 +7,9 @@ import {
   LineChart, Line,
   XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const COLORS = [
-  '#0088FE', // user ธรรมดา
-  '#00C49F', // นักศึกษา
-  '#FFBB28', // บุคลากร
-  '#FF8042', // บุคคลภายนอก
-  '#AA46BE', // นักศึกษาสาธิต
-];
+const COLORS = ['#FF7F11', '#FDBA74', '#60A5FA', '#34D399', '#C084FC'];
 
 const DashBoard = () => {
   const [loading, setLoading] = useState(true);
@@ -30,10 +25,7 @@ const DashBoard = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setSummary({
-        totalUsers: 312,
-        todayVisits: 48,
-      });
+      setSummary({ totalUsers: 312, todayVisits: 48 });
 
       setUserByType([
         { name: 'นักศึกษา', value: 95 },
@@ -64,8 +56,6 @@ const DashBoard = () => {
     }, 500);
   }, []);
 
-  const handlePrint = () => window.print();
-
   if (loading) {
     return (
       <div className="text-center my-5">
@@ -76,47 +66,84 @@ const DashBoard = () => {
   }
 
   return (
-    <Container className="my-5 dashboard-print">
-      {/* ===== Report Header ===== */}
+    <Container className="py-5 dashboard-print">
+
+      {/* ===== HEADER ===== */}
       <Row className="mb-4 align-items-center">
         <Col>
-          <h3 className="fw-bold">📊 รายงานสถิติการใช้งานระบบฟิตเนส</h3>
+          <h2 style={{ color: '#FF7F11' }} className="fw-bold">
+            <i className="bi bi-bar-chart-line me-2"></i>
+            Fitness Dashboard
+          </h2>
           <p className="text-muted mb-0">
-            หน่วยงาน: SU.ED FITNESS CENTER<br />
+            SU.ED FITNESS CENTER<br />
             วันที่จัดทำรายงาน: {new Date().toLocaleDateString('th-TH')}
           </p>
         </Col>
+
         <Col className="text-end d-print-none">
-          <Button variant="outline-primary" onClick={handlePrint}>
-            🖨 พิมพ์รายงาน
+          <Button
+            variant="outline-warning"
+            className="rounded-pill px-4"
+            onClick={() => window.print()}
+          >
+            <i className="bi bi-printer me-1"></i>
+            พิมพ์รายงาน
           </Button>
         </Col>
       </Row>
 
-      {/* ===== Summary ===== */}
-      <Row className="mb-4">
+      {/* ===== SUMMARY ===== */}
+      <Row className="mb-4 g-4">
         <Col md={6}>
-          <Card className="shadow-sm text-center">
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
             <Card.Body>
-              <h6>👥 ผู้ใช้งานทั้งหมด</h6>
+              <i className="bi bi-people-fill admin-icon"></i>
+              <h6 className="mt-2">ผู้ใช้งานทั้งหมด</h6>
               <h2>{summary.totalUsers}</h2>
             </Card.Body>
           </Card>
         </Col>
+
         <Col md={6}>
-          <Card className="shadow-sm text-center">
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
             <Card.Body>
-              <h6>📅 ผู้เข้าใช้งานวันนี้</h6>
+              <i className="bi bi-calendar-check admin-icon"></i>
+              <h6 className="mt-2">ผู้เข้าใช้งานวันนี้</h6>
               <h2>{summary.todayVisits}</h2>
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      {/* ===== Charts Page 1 ===== */}
-      <Row>
+      {/* ===== CHARTS ===== */}
+      <Row className="g-4">
         <Col md={6}>
-          <Card className="shadow-sm p-3 mb-4">
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
             <h6 className="text-center mb-3">ผู้ใช้งานแยกตามประเภท</h6>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -133,15 +160,23 @@ const DashBoard = () => {
         </Col>
 
         <Col md={6}>
-          <Card className="shadow-sm p-3 mb-4">
-            <h6 className="text-center mb-3">สมัครสมาชิก (Member) รายเดือน</h6>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <h6 className="text-center mb-3">สมัครสมาชิก (รายเดือน)</h6>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={monthlyMembers}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="members" fill="#0088FE" />
+                <Bar dataKey="members" fill="#FF7F11" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
@@ -150,10 +185,17 @@ const DashBoard = () => {
 
       <div className="page-break" />
 
-      {/* ===== Charts Page 2 ===== */}
-      <Row>
-        <Col md={12}>
-          <Card className="shadow-sm p-3">
+      <Row className="mt-4">
+        <Col>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
             <h6 className="text-center mb-3">ผู้เข้าใช้งานรายวัน</h6>
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={dailyVisits}>
@@ -161,7 +203,12 @@ const DashBoard = () => {
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="visits" stroke="#FF8042" strokeWidth={3} />
+                <Line
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#FF7F11"
+                  strokeWidth={3}
+                />
               </LineChart>
             </ResponsiveContainer>
           </Card>

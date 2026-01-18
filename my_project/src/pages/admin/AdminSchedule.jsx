@@ -67,7 +67,10 @@ const AdminSchedule = () => {
       {/* Header */}
       <Row className="mb-3">
         <Col className="d-flex justify-content-between align-items-center">
-          <h2>📅 จัดการตารางคลาส</h2>
+        <Col>
+          <h2 className="mb-2" style={{ color: '#FF7F11' }}>จัดการตารางเวลา</h2>
+          <p className="text-muted mb-4">Manage Schedules</p>
+        </Col>
           <Button variant="success" onClick={fetchClasses}>
             🔄 โหลดข้อมูลใหม่
           </Button>

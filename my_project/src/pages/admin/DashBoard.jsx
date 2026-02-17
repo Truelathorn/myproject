@@ -26,7 +26,7 @@ const DashBoard = () => {
   useEffect(() => {
     // ===== mock dashboard data =====
     setTimeout(() => {
-       setSummary({ totalUsers: 312, todayVisits: 48 });
+      setSummary({ totalUsers: 312, todayVisits: 48 });
 
       setUserByType([
         { name: 'นักศึกษา', value: 95 },
@@ -78,7 +78,7 @@ const DashBoard = () => {
     );
   }
 
-   return (
+  return (
     <Container className="py-5 dashboard-print">
 
       {/* ===== HEADER ===== */}
@@ -243,29 +243,58 @@ const DashBoard = () => {
                     <thead className="table-light">
                       <tr>
                         <th>เวลา</th>
-                        <th>User ID</th>
+                        <th>Username</th>
                         <th>Role</th>
                         <th>Action</th>
                         <th>รายละเอียด</th>
                         <th>IP</th>
                       </tr>
                     </thead>
+
                     <tbody>
                       {logs.map(log => (
                         <tr key={log.log_id}>
-                          <td>{new Date(log.created_at).toLocaleString('th-TH')}</td>
-                          <td>{log.user_id ?? '-'}</td>
+                          <td>{log.created_at?.replace('T', ' ').split('.')[0]}</td>
+
+
                           <td>
-                            <span className={`badge bg-${log.role === 'admin' ? 'danger' : 'primary'}`}>
+                            {log.username ? (
+                              <span className="fw-semibold">{log.username}</span>
+                            ) : (
+                              <span className="text-muted">guest</span>
+                            )}
+                          </td>
+
+                          <td>
+                            <span
+                              className={`badge bg-${log.role === 'admin' ? 'danger' : 'primary'
+                                }`}
+                            >
                               {log.role}
                             </span>
                           </td>
-                          <td>{log.action}</td>
+
+                          <td>
+                            <span
+                              className={`badge ${log.action === 'delete'
+                                ? 'bg-danger'
+                                : log.action === 'update'
+                                  ? 'bg-warning text-dark'
+                                  : log.action === 'create'
+                                    ? 'bg-success'
+                                    : 'bg-secondary'
+                                }`}
+                            >
+                              {log.action}
+                            </span>
+                          </td>
+
                           <td>{log.description}</td>
                           <td>{log.ip_address}</td>
                         </tr>
                       ))}
                     </tbody>
+
                   </table>
                 </div>
               )}

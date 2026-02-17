@@ -68,7 +68,7 @@ export default function Profile() {
       </p>
 
       <Row className="g-4">
-        {/* LEFT — PROFILE INFO */}
+        {/* ================= LEFT — USER INFO ================= */}
         <Col lg={6}>
           <Card
             className="shadow-lg h-100"
@@ -129,7 +129,7 @@ export default function Profile() {
           </Card>
         </Col>
 
-        {/* RIGHT — MEMBERSHIP */}
+        {/* ================= RIGHT — MEMBERSHIP ================= */}
         <Col lg={6}>
           <Card
             className="shadow-lg h-100"
@@ -144,17 +144,20 @@ export default function Profile() {
                   className="bi bi-award"
                   style={{ fontSize: 24, color: "#FF7F11" }}
                 />
-                <h5 style={{ color: "#FF7F11" }}>Membership Status</h5>
+                <h5 style={{ color: "#FF7F11" }}>Membership Information</h5>
               </div>
 
-              {!membership || membership.status !== "active" ? (
+              {!membership ? (
                 <>
                   <Alert variant="danger">
-                    You currently have no active membership
+                    You currently have no membership
                   </Alert>
                   <Button
                     className="w-100 rounded-pill"
-                    style={{ backgroundColor: "#FF7F11", border: "none" }}
+                    style={{
+                      backgroundColor: "#FF7F11",
+                      border: "none",
+                    }}
                     onClick={() => navigate("/package")}
                   >
                     สมัครสมาชิก
@@ -162,54 +165,86 @@ export default function Profile() {
                 </>
               ) : (
                 <>
+                  {/* STATUS */}
                   <Alert
-                    variant="success"
-                    style={{
-                      backgroundColor: "#FF7F11",
-                      border: "none",
-                      color: "#fff",
-                    }}
+                    variant={
+                      membership.status === "active"
+                        ? "success"
+                        : membership.status === "pending"
+                        ? "warning"
+                        : "secondary"
+                    }
                   >
                     <strong>
-                      {packageInfo
-                        ? `${packageInfo.userType} • ${packageInfo.duration}`
-                        : "ไม่พบข้อมูลแพ็กเกจ"}
+                      สถานะ: {membership.status.toUpperCase()}
                     </strong>
                   </Alert>
 
-                  {/* แสดงวันหมดอายุ + เวลา */}
-                  <p className="text-center text-muted">
-                    หมดอายุ:{" "}
-                    {new Date(membership.end_date).toLocaleString("th-TH", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-
-                  <div
-                    style={{
-                      width: 150,
-                      height: 150,
-                      border: "2px dashed #FF7F11",
-                      borderRadius: 12,
-                      margin: "0 auto",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#FF7F11",
-                    }}
-                  >
-                    QR Code
+                  {/* MEMBERSHIP NO */}
+                  <div className="mb-3">
+                    <small className="text-muted">เลขสมาชิก</small>
+                    <div style={{ fontWeight: "bold", fontSize: 18 }}>
+                      {membership.membership_no}
+                    </div>
                   </div>
+
+                  {/* PACKAGE TYPE */}
+                  <div className="mb-3">
+                    <small className="text-muted">ประเภทสมาชิก</small>
+                    <div>
+                      {packageInfo
+                        ? `${packageInfo.userType} • ${packageInfo.duration}`
+                        : "ไม่พบข้อมูลแพ็กเกจ"}
+                    </div>
+                  </div>
+
+                  {/* START DATE */}
+                  {membership.start_date && (
+                    <div className="mb-3">
+                      <small className="text-muted">วันที่เริ่ม</small>
+                      <div>
+                        {new Date(
+                          membership.start_date
+                        ).toLocaleString("th-TH")}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* END DATE */}
+                  {membership.end_date && (
+                    <div className="mb-3">
+                      <small className="text-muted">วันหมดอายุ</small>
+                      <div>
+                        {new Date(
+                          membership.end_date
+                        ).toLocaleString("th-TH")}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* QR CODE (เฉพาะ ACTIVE) */}
+                  {membership.status === "active" && (
+                    <div
+                      style={{
+                        width: 150,
+                        height: 150,
+                        border: "2px dashed #FF7F11",
+                        borderRadius: 12,
+                        margin: "20px auto",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#FF7F11",
+                      }}
+                    >
+                      QR Code
+                    </div>
+                  )}
                 </>
               )}
             </Card.Body>
           </Card>
         </Col>
-
       </Row>
     </Container>
   );

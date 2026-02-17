@@ -1,109 +1,129 @@
 package routes
 
 import (
-    "backend/controllers"
-    "backend/middleware"
-    "github.com/gin-gonic/gin"
+	"backend/controllers"
+	"backend/middleware"
+	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(r *gin.Engine) {
-    api := r.Group("/api/v1")
-    
-    {
-        // ✅ Public routes (ไม่ต้อง login)
-        auth := api.Group("/auth")
-        {
-            auth.POST("/register", controllers.Register)
-            auth.POST("/login", controllers.Login)
-            auth.POST("/logout", controllers.Logout)
-        }
+	api := r.Group("/api/v1")
 
-        news := api.Group("/news")
-        {
-            news.GET("", controllers.GetAllNews)
-            news.GET("/:id", controllers.GetNewsByID)
-        }
+	{
+		// ✅ Public routes (ไม่ต้อง login)
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", controllers.Register)
+			auth.POST("/login", controllers.Login)
+			auth.POST("/logout", controllers.Logout)
+		}
 
-        class := api.Group("/classes")
-        {
-            class.GET("", controllers.GetClasses)
-            class.GET("/names", controllers.GetUniqueClassNames)
-        }
-        packages := api.Group("/packages")
-            {
-                packages.GET("", controllers.GetPackages)
-            }
-        // 🔒 Protected routes (ต้อง login)
-        protected := api.Group("/")
-        protected.Use(middleware.AuthMiddleware())
-        //protected.Use(middleware.UserLogMiddleware())  // ✅ log ทุก request
-        {
-            // 👤 User routes
-            user := protected.Group("/users")
-            {
-                user.GET("/me", controllers.GetCurrentUser)
-            }
-            membership := protected.Group("/membership")
-            membership.Use(middleware.RequireRoles("user"))
-            {
-                membership.GET("", controllers.GetMemberships)
-                membership.POST("", controllers.CreateMembership)
-            }
-            // 📰 News (เฉพาะ admin)
-            newsAdmin := protected.Group("/news")
-            newsAdmin.Use(middleware.RequireRoles("admin"))
-            {
-                newsAdmin.POST("", controllers.CreateNews)
-                newsAdmin.PUT("/:id", controllers.UpdateNews)     // ✅ update
-                newsAdmin.DELETE("/:id", controllers.DeleteNews)
-            }
-            admin := protected.Group("/admin")
-            admin.Use(middleware.RequireRoles("admin"))
-            {       
-            admin.GET("/users", controllers.GetUsers)
-            //admin.PUT("/users/:id", controllers.UpdateUser)
-            //admin.DELETE("/users/:id", controllers.DeleteUser)
-            }   
+		news := api.Group("/news")
+		{
+			news.GET("", controllers.GetAllNews)
+			news.GET("/:id", controllers.GetNewsByID)
+		}
 
-            // 🏋️‍♂️ Classes (admin, fitness_staff)
-            classAdmin := protected.Group("/classes")
-            classAdmin.Use(middleware.RequireRoles("admin"))
-            {
-                classAdmin.POST("", controllers.CreateClass)
-                classAdmin.PUT("/:id", controllers.UpdateClass)
-                classAdmin.DELETE("/:id", controllers.DeleteClass)
-            }
-            packagesAdmin := protected.Group("/packages")
-            packagesAdmin.Use(middleware.RequireRoles("admin"))
-            {
-                packagesAdmin.POST("", controllers.CreatePackage)
-                packagesAdmin.PUT("/:id", controllers.UpdatePackage)
-                packagesAdmin.DELETE("/:id", controllers.DeletePackage)
-            }
-            // 💳 Memberships (เฉพาะ admin)
-            membershipAdmin := protected.Group("/memberships")
-            membershipAdmin.Use(middleware.RequireRoles("admin"))
-            {
-                membershipAdmin.GET("", controllers.GetAllMemberMemberships)
-                //membershipAdmin.PUT("/:id", controllers.UpdateMembershipStatus)
-                membershipAdmin.DELETE("/:id", controllers.DeleteMembership)
-               
-            }
-            adminlog := protected.Group("/admin")
-            adminlog.Use(middleware.RequireRoles("admin"))
-            {
-                adminlog.GET("/logs", controllers.GetUserLogs)
-            }
-            
-            
+		class := api.Group("/classes")
+		{
+			class.GET("", controllers.GetClasses)
+			class.GET("/names", controllers.GetUniqueClassNames)
+		}
+		packages := api.Group("/packages")
+		{
+			packages.GET("", controllers.GetPackages)
+		}
+		// 🔒 Protected routes (ต้อง login)
+		protected := api.Group("/")
+		protected.Use(middleware.AuthMiddleware())
+		//protected.Use(middleware.UserLogMiddleware())  // ✅ log ทุก request
+		{
+			// 👤 User routes
+			user := protected.Group("/users")
+			{
+				user.GET("/me", controllers.GetCurrentUser)
+			}
+			membership := protected.Group("/membership")
+			membership.Use(middleware.RequireRoles("user"))
+			{
+				membership.GET("", controllers.GetMemberships)
+				membership.POST("", controllers.CreateMembership)
+			}
+			membershipInfo := protected.Group("/membership-info")
+            membershipInfo.Use(middleware.RequireRoles("user"))
+			{
+				membershipInfo.POST("", controllers.CreateMembershipInfo)
+				membershipInfo.PUT("/:id", controllers.UpdateMembershipInfo)
+				membershipInfo.DELETE("/:id", controllers.DeleteMembershipInfo)
+			}
 
-            // 📦 Packages (เฉพาะ admin)
-            /*packages := protected.Group("/packages")
-            packages.Use(middleware.RequireRoles("admin"))
-            {
-                packages.GET("", controllers.GetPackages)
-                packages.POST("", controllers.CreatePackage)
-            }*/
-        }
-    }
+			health := protected.Group("/health-answer")
+            health.Use(middleware.RequireRoles("user"))
+			{
+				health.POST("", controllers.CreateHealthAnswer)
+				//health.PUT("/:id", controllers.UpdateHealthAnswer)
+				//health.DELETE("/:id", controllers.DeleteHealthAnswer)
+			}
+
+			// 📰 News (เฉพาะ admin)
+			newsAdmin := protected.Group("/news")
+			newsAdmin.Use(middleware.RequireRoles("admin"))
+			{
+				newsAdmin.POST("", controllers.CreateNews)
+				newsAdmin.PUT("/:id", controllers.UpdateNews) // ✅ update
+				newsAdmin.DELETE("/:id", controllers.DeleteNews)
+			}
+			admin := protected.Group("/admin")
+			admin.Use(middleware.RequireRoles("admin"))
+			{
+				admin.GET("/users", controllers.GetUsers)
+				//admin.PUT("/users/:id", controllers.UpdateUser)
+				//admin.DELETE("/users/:id", controllers.DeleteUser)
+			}
+
+			// 🏋️‍♂️ Classes (admin, fitness_staff)
+			classAdmin := protected.Group("/classes")
+			classAdmin.Use(middleware.RequireRoles("admin"))
+			{
+				classAdmin.POST("", controllers.CreateClass)
+				classAdmin.PUT("/:id", controllers.UpdateClass)
+				classAdmin.DELETE("/:id", controllers.DeleteClass)
+			}
+			packagesAdmin := protected.Group("/packages")
+			packagesAdmin.Use(middleware.RequireRoles("admin"))
+			{
+				packagesAdmin.POST("", controllers.CreatePackage)
+				packagesAdmin.PUT("/:id", controllers.UpdatePackage)
+				packagesAdmin.DELETE("/:id", controllers.DeletePackage)
+			}
+			// 💳 Memberships (เฉพาะ admin)
+			membershipAdmin := protected.Group("/memberships")
+			membershipAdmin.Use(middleware.RequireRoles("admin"))
+			{
+				membershipAdmin.GET("", controllers.GetAllMemberMemberships)
+
+				// ✅ อนุมัติ
+				membershipAdmin.PATCH("/:id/approve", controllers.ApproveMembership)
+
+				// ❌ reject
+				membershipAdmin.PATCH("/:id/reject", controllers.RejectMembership)
+
+				membershipAdmin.DELETE("/:id", controllers.DeleteMembership)
+			}
+
+			adminlog := protected.Group("/admin")
+			adminlog.Use(middleware.RequireRoles("admin"))
+			{
+				adminlog.GET("/logs", controllers.GetUserLogs)
+			}
+
+			// 📦 Packages (เฉพาะ admin)
+			/*packages := protected.Group("/packages")
+			  packages.Use(middleware.RequireRoles("admin"))
+			  {
+			      packages.GET("", controllers.GetPackages)
+			      packages.POST("", controllers.CreatePackage)
+			  }*/
+		}
+	}
 }

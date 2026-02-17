@@ -6,6 +6,8 @@ import (
 
     "backend/config"
     "backend/models"
+    "fmt"
+    "backend/untils"
 
     "github.com/gin-gonic/gin"
 )
@@ -29,7 +31,11 @@ func CreatePackage(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
         return
     }
-
+    utils.SaveLog(
+    c,
+    "create",
+    fmt.Sprintf("สร้างแพ็กเกจใหม่ ราคา :%.2f id: %d", pack.Price, pack.PackageID),
+)
     c.JSON(http.StatusCreated, pack)
 }
 
@@ -66,7 +72,11 @@ func UpdatePackage(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
         return
     }
-
+    utils.SaveLog(
+    c,
+    "update",
+    fmt.Sprintf("อัปเดตแพ็กเกจ ราคา :%.2f id: %d", pack.Price, pack.PackageID),
+)
     c.JSON(http.StatusOK, pack)
 }
 
@@ -90,6 +100,10 @@ func DeletePackage(c *gin.Context) {
         c.JSON(http.StatusNotFound, gin.H{"error": "ไม่พบแพ็กเกจนี้"})
         return
     }
-
+    utils.SaveLog(
+    c,
+    "delete",
+    fmt.Sprintf("ลบแพ็กเกจ id: %d", idInt),
+)   
     c.JSON(http.StatusOK, gin.H{"message": "ลบแพ็กเกจเรียบร้อยแล้ว"})
 }

@@ -5,7 +5,7 @@ import "time"
 type Membership struct {
 	MembershipID uint `gorm:"primaryKey" json:"membership_id"`
 
-	MembershipNo uint `json:"membership_no"`
+	MembershipNo string `json:"membership_no"`
 	UserID       uint `json:"user_id"`
 	PackageID    uint `json:"package_id"`
 
@@ -16,4 +16,7 @@ type Membership struct {
 
 	User    User    `gorm:"foreignKey:UserID;references:UserID" json:"user"`
 	Package Package `gorm:"foreignKey:PackageID;references:PackageID" json:"package"`
+	MembershipInfo MembershipInfo `gorm:"foreignKey:MembershipID;references:MembershipID" json:"membership_info"`
+	Health   HealthAnswer  `gorm:"foreignKey:MembershipID;references:MembershipID" json:"health"`
+	
 }

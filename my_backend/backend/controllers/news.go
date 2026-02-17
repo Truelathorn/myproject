@@ -7,6 +7,7 @@ import (
     "os"
     "time"
     "fmt"
+    "backend/untils"
 
     "github.com/gin-gonic/gin"
     "gorm.io/gorm"
@@ -77,6 +78,11 @@ func CreateNews(c *gin.Context) {
         c.JSON(500, gin.H{"error": err.Error()})
         return
     }
+    utils.SaveLog(
+	c,
+	"create",
+	fmt.Sprintf("สร้างข่าวใหม่ %s id: %d", news.Title, news.NewsID),
+)
 
     c.JSON(http.StatusOK, news)
 }
@@ -105,6 +111,11 @@ func UpdateNews(c *gin.Context) {
     }
 
     config.DB.Save(&news)
+    utils.SaveLog(
+	c,
+	"update",
+	fmt.Sprintf("อัปเดตข่าว %s id: %d", news.Title, news.NewsID),
+    )
     c.JSON(http.StatusOK, news)
 }
 
@@ -127,6 +138,10 @@ func DeleteNews(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-
+    utils.SaveLog(
+    c,
+    "delete",
+    fmt.Sprintf("ลบข่าว %s id: %d", news.Title, news.NewsID),
+    )
     c.JSON(http.StatusOK, gin.H{"status": "deleted"})
 }

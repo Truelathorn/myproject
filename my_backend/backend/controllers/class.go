@@ -4,6 +4,9 @@ import (
     "net/http"
     "backend/config"
     "backend/models"
+    "backend/untils"
+     "fmt"
+   
     "github.com/gin-gonic/gin"
 )
 
@@ -72,7 +75,11 @@ func CreateClass(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-
+    utils.SaveLog(
+    c,
+    "create",
+    fmt.Sprintf("สร้างคลาสใหม่ %s id: %d", input.Name, input.ClassID),
+)
     c.JSON(http.StatusCreated, input)
 }
 
@@ -117,7 +124,11 @@ func UpdateClass(c *gin.Context) {
         })
         return
     }
-
+    utils.SaveLog(
+    c,
+    "update",
+    fmt.Sprintf("อัปเดตคลาส %s id: %d", input.Name, input.ClassID),
+)
     c.JSON(http.StatusOK, gin.H{
         "status": "success",
         "data":   class,
@@ -153,7 +164,11 @@ func DeleteClass(c *gin.Context) {
         })
         return
     }
-
+    utils.SaveLog(
+    c,
+    "delete",
+    fmt.Sprintf("ลบคลาส %s id: %d", class.Name, class.ClassID),
+)
     c.JSON(http.StatusOK, gin.H{
         "status":  "success",
         "message": "Class deleted successfully",

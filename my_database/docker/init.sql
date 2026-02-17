@@ -40,6 +40,63 @@ CREATE TABLE memberships (
     CONSTRAINT uq_user_membership_no
         UNIQUE (user_id, membership_no)
 );
+CREATE TABLE membership_info (
+    info_id SERIAL PRIMARY KEY,
+
+    membership_id INT NOT NULL UNIQUE,
+
+    -- ข้อมูลทั่วไป
+    full_name VARCHAR(100) NOT NULL,
+    gender VARCHAR(10) CHECK (gender IN ('male','female')),
+    birth_date DATE,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    line_id VARCHAR(100),
+
+    -- ประเภทสมาชิกจากฟอร์ม
+    user_type VARCHAR(30)
+        CHECK (user_type IN ('student', 'university_staff', 'external')),
+
+    faculty VARCHAR(100),
+    major VARCHAR(100),
+    student_id VARCHAR(50),
+
+    department VARCHAR(100),
+
+    -- ข้อมูลฉุกเฉิน
+    emergency_name VARCHAR(100),
+    emergency_phone VARCHAR(20),
+
+    -- รู้จักจากไหน
+    known_from VARCHAR(100),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_membership_info
+        FOREIGN KEY (membership_id)
+        REFERENCES memberships(membership_id)
+        ON DELETE CASCADE
+);
+CREATE TABLE health_answers (
+    health_id SERIAL PRIMARY KEY,
+
+    membership_id INT NOT NULL UNIQUE,
+
+    q1 BOOLEAN,
+    q2 BOOLEAN,
+    q3 BOOLEAN,
+    q4 BOOLEAN,
+    q5 BOOLEAN,
+    q6 BOOLEAN,
+    q7 BOOLEAN,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_health_membership
+        FOREIGN KEY (membership_id)
+        REFERENCES memberships(membership_id)
+        ON DELETE CASCADE
+);
 
 CREATE TABLE FitnessClasses (
     class_id SERIAL PRIMARY KEY,

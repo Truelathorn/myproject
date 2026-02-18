@@ -206,6 +206,7 @@ func RejectMembership(c *gin.Context) {
 		"message": "membership rejected",
 	})
 }
+
 // =============================
 // MEMBERSHIP INFO (สำหรับเก็บข้อมูลส่วนตัวจากฟอร์มตอนสมัคร)
 // =============================

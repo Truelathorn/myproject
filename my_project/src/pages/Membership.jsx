@@ -84,7 +84,6 @@ export default function MembershipPage() {
               Document Image Preview
             </div>
           </Card>
-
           <Card className="shadow-sm p-4 mt-4" style={{ borderRadius: "16px" }}>
             <h5 className="mb-3">แบบสอบถามความพร้อมในการออกกำลังกาย</h5>
             <p className="text-muted" style={{ fontSize: "0.9rem" }}>
@@ -196,6 +195,65 @@ export default function MembershipPage() {
               </Button>
             </Form>
           </Card>
+          <Card className="shadow-sm p-4 mt-4" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-3">ข้อมูลการสมัครสมาชิก</h5>
+
+            {/* ประเภทสมาชิก */}
+            <Form.Group className="mb-3">
+              <Form.Label>ประเภทสมาชิก</Form.Label>
+
+              <Form.Check
+                type="radio"
+                name="memberType"
+                label="นักศึกษามหาวิทยาลัยศิลปากร"
+              />
+              <Form.Check
+                type="radio"
+                name="memberType"
+                label="นักเรียนสาธิตมหาวิทยาลัยศิลปากร"
+              />
+              <Form.Check
+                type="radio"
+                name="memberType"
+                label="บุคลากรของคณะศึกษาศาสตร์"
+              />
+              <Form.Check
+                type="radio"
+                name="memberType"
+                label="บุคลากรของมหาวิทยาลัยศิลปากร"
+              />
+              <Form.Check
+                type="radio"
+                name="memberType"
+                label="บุคคลภายนอก"
+              />
+            </Form.Group>
+
+            {/* วัตถุประสงค์ในการใช้บริการ */}
+            <Form.Group className="mb-3">
+              <Form.Label>วัตถุประสงค์ในการใช้บริการ (เลือกได้มากกว่า 1 ข้อ)</Form.Label>
+
+              <Form.Check type="checkbox" label="เพื่อเสริมสร้างและพัฒนากล้ามเนื้อ" />
+              <Form.Check type="checkbox" label="เพื่อลดไขมันส่วนเกิน กระชับสัดส่วน" />
+              <Form.Check type="checkbox" label="ออกกำลังกายเพื่อป้องกันโรค" />
+              <Form.Check type="checkbox" label="พัฒนาสมรรถภาพทางกายเพื่อใช้ในการแข่งขันกีฬา" />
+              <Form.Check type="checkbox" label="เพื่อผ่อนคลายความเครียดจากการทำงาน" />
+              <Form.Check type="checkbox" label="อื่น ๆ" />
+            </Form.Group>
+
+            {/* โรคประจำตัว */}
+            <Form.Group className="mb-3">
+              <Form.Label>ท่านมีโรคประจำตัวหรือไม่</Form.Label>
+              <Form.Check type="radio" name="disease" label="ไม่มี" />
+              <Form.Check type="radio" name="disease" label="มี (โปรดระบุ)" />
+              <Form.Control
+                type="text"
+                className="mt-2"
+                placeholder="ระบุโรคประจำตัว"
+              />
+            </Form.Group>
+          </Card>
+
         </Col>
       </Row>
     </Container>

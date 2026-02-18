@@ -245,6 +245,7 @@ export default function Profile() {
             </Card.Body>
           </Card>
         </Col>
+
       </Row>
     </Container>
   );

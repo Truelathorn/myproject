@@ -37,7 +37,7 @@ func ConnectDatabase() {
 	)
 
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-	DisableForeignKeyConstraintWhenMigrating: true,
+		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
 		log.Fatal("❌ Database connection failed:", err)
@@ -51,7 +51,6 @@ func ConnectDatabase() {
 		&models.News{},
 		&models.MembershipInfo{},
 		&models.HealthAnswer{},
-
 	)
 	if err != nil {
 		log.Fatal("❌ Migration failed:", err)
@@ -60,7 +59,6 @@ func ConnectDatabase() {
 	DB = database
 	log.Println("✅ Database connected & migrated successfully!")
 }
-
 
 func GetJWTSecret() []byte {
 	return []byte(os.Getenv("JWT_SECRET"))

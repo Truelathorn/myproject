@@ -8,6 +8,10 @@ import {
   XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588
 const COLORS = ['#FF7F11', '#FDBA74', '#60A5FA', '#34D399', '#C084FC'];
 
 const DashBoard = () => {
@@ -21,7 +25,10 @@ const DashBoard = () => {
   const [userByType, setUserByType] = useState([]);
   const [monthlyMembers, setMonthlyMembers] = useState([]);
   const [dailyVisits, setDailyVisits] = useState([]);
+<<<<<<< HEAD
   const [logs, setLogs] = useState([]);
+=======
+>>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588
 
   useEffect(() => {
     // ===== mock dashboard data =====
@@ -103,6 +110,131 @@ const DashBoard = () => {
             <i className="bi bi-printer me-1"></i>
             พิมพ์รายงาน
           </Button>
+<<<<<<< HEAD
+=======
+        </Col>
+      </Row>
+
+      {/* ===== SUMMARY ===== */}
+      <Row className="mb-4 g-4">
+        <Col md={6}>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <Card.Body>
+              <i className="bi bi-people-fill admin-icon"></i>
+              <h6 className="mt-2">ผู้ใช้งานทั้งหมด</h6>
+              <h2>{summary.totalUsers}</h2>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={6}>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <Card.Body>
+              <i className="bi bi-calendar-check admin-icon"></i>
+              <h6 className="mt-2">ผู้เข้าใช้งานวันนี้</h6>
+              <h2>{summary.todayVisits}</h2>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ===== CHARTS ===== */}
+      <Row className="g-4">
+        <Col md={6}>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <h6 className="text-center mb-3">ผู้ใช้งานแยกตามประเภท</h6>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={userByType} dataKey="value" nameKey="name" outerRadius={110} label>
+                  {userByType.map((_, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+
+        <Col md={6}>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <h6 className="text-center mb-3">สมัครสมาชิก (รายเดือน)</h6>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyMembers}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="members" fill="#FF7F11" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+      </Row>
+
+      <div className="page-break" />
+
+      <Row className="mt-4">
+        <Col>
+          <Card
+            className="shadow-lg h-100"
+            style={{
+              borderRadius: '20px',
+              backgroundColor: '#ffffff',
+              padding: '1rem',
+              border: '2px solid #FF7F11'
+            }}
+          >
+            <h6 className="text-center mb-3">ผู้เข้าใช้งานรายวัน</h6>
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={dailyVisits}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#FF7F11"
+                  strokeWidth={3}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </Card>
+>>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588
         </Col>
       </Row>
 

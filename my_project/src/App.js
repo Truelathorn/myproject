@@ -46,7 +46,6 @@ function App() {
               <>
                 <Sliceshow />
                 <News limit={3} hideFilter={true} />
-
                 <Schedule showGuide={false} />
               </>
             }
@@ -70,7 +69,7 @@ function App() {
           <Route
             path="/membership"
             element={
-              <PrivateRoute roleRequired="user">
+              <PrivateRoute roleRequired="admin">
                 <Membership />
               </PrivateRoute>
             }

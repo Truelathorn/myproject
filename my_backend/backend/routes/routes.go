@@ -3,6 +3,7 @@ package routes
 import (
 	"backend/controllers"
 	"backend/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -50,7 +51,7 @@ func SetupRoutes(r *gin.Engine) {
 				membership.POST("", controllers.CreateMembership)
 			}
 			membershipInfo := protected.Group("/membership-info")
-            membershipInfo.Use(middleware.RequireRoles("user"))
+			membershipInfo.Use(middleware.RequireRoles("user"))
 			{
 				membershipInfo.POST("", controllers.CreateMembershipInfo)
 				membershipInfo.PUT("/:id", controllers.UpdateMembershipInfo)
@@ -58,7 +59,7 @@ func SetupRoutes(r *gin.Engine) {
 			}
 
 			health := protected.Group("/health-answer")
-            health.Use(middleware.RequireRoles("user"))
+			health.Use(middleware.RequireRoles("user"))
 			{
 				health.POST("", controllers.CreateHealthAnswer)
 				//health.PUT("/:id", controllers.UpdateHealthAnswer)

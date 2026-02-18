@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Container, Row, Col, Form, Badge } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Container,
+  Row,
+  Col,
+  Form,
+  Badge,
+  Modal
+} from "react-bootstrap";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
 
 export default function AdminUserList() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+
+  // 🔥 state สำหรับ delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const token = Cookies.get("token");
   const navigate = useNavigate();
 
@@ -41,7 +58,8 @@ export default function AdminUserList() {
 
   const userTypeBadge = (user) => {
     const membership = user.memberships?.[0];
-    if (!membership) return <Badge bg="light" text="dark">No Package</Badge>;
+    if (!membership)
+      return <Badge bg="light" text="dark">No Package</Badge>;
 
     switch (membership.package?.user_type) {
       case "student":
@@ -53,30 +71,80 @@ export default function AdminUserList() {
     }
   };
 
+  // ================= DELETE LOGIC =================
+
+  const openDeleteModal = (user) => {
+    setSelectedUser(user);
+    setPassword("");
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedUser(null);
+    setPassword("");
+  };
+
+  const handleDeleteUser = async () => {
+    if (!password) {
+      alert("กรุณากรอกรหัสผ่าน");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `http://localhost:8080/api/v1/admin/users/${selectedUser.user_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ password }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Password incorrect");
+      }
+
+      setUsers(users.filter(u => u.user_id !== selectedUser.user_id));
+      closeDeleteModal();
+      alert("ลบผู้ใช้เรียบร้อยแล้ว");
+    } catch (err) {
+      alert("รหัสผ่านไม่ถูกต้อง หรือไม่สามารถลบได้");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= UI =================
+
   return (
     <Container className="py-4">
-  <Row className="mb-3 align-items-center">
-    <Col>
-      <h2 className="fw-bold">Manage Users</h2>
-    </Col>
+      <Row className="mb-3 align-items-center">
+        <Col>
+          <h2 className="fw-bold">Manage Users</h2>
+        </Col>
 
-    <Col className="d-flex justify-content-end gap-2">
-      <Button
-        variant="outline-primary"
-        onClick={() => navigate("/admin/memberships")}
-      >
-        Manage Memberships
-      </Button>
+        <Col className="d-flex justify-content-end gap-2">
+          <Button
+            variant="outline-primary"
+            onClick={() => navigate("/admin/memberships")}
+          >
+            Manage Memberships
+          </Button>
 
-      <Button
-        variant="primary"
-        onClick={() => navigate("/admin/users/create")}
-      >
-        + Create Admin
-      </Button>
-    </Col>
-  </Row>
-
+          <Button
+            variant="primary"
+            onClick={() => navigate("/admin/users/create")}
+          >
+            + Create Admin
+          </Button>
+        </Col>
+      </Row>
 
       {/* Filters */}
       <Row className="mb-4">
@@ -90,7 +158,10 @@ export default function AdminUserList() {
         </Col>
 
         <Col md={4}>
-          <Form.Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+          <Form.Select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+          >
             <option value="">All Roles</option>
             <option value="admin">Admin</option>
             <option value="fitness_staff">Staff</option>
@@ -137,7 +208,11 @@ export default function AdminUserList() {
                   >
                     Edit
                   </Button>
-                  <Button variant="danger" size="sm">
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => openDeleteModal(u)}
+                  >
                     Delete
                   </Button>
                 </td>
@@ -146,6 +221,45 @@ export default function AdminUserList() {
           )}
         </tbody>
       </Table>
+
+      {/* ===== Delete Modal ===== */}
+      <Modal show={showDeleteModal} onHide={closeDeleteModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-danger">
+            ยืนยันการลบผู้ใช้
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>
+            คุณต้องการลบผู้ใช้
+            <strong> @{selectedUser?.username}</strong> ใช่หรือไม่
+          </p>
+
+          <Form.Group className="mt-3">
+            <Form.Label>กรอกรหัสผ่านของคุณเพื่อยืนยัน</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeDeleteModal}>
+            ยกเลิก
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDeleteUser}
+            disabled={loading || !password}
+          >
+            {loading ? "กำลังลบ..." : "ยืนยันลบ"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

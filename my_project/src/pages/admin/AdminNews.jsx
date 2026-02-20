@@ -83,15 +83,9 @@ const AdminNews = () => {
           {newsList.map((news) => (
             <Col key={news.news_id}>
               <Card className="admin-news-card h-100">
-<<<<<<< HEAD
                 {news.image_url && (
                   <Card.Img
                     src={news.image_url}
-=======
-                {news.image && (
-                  <Card.Img
-                    src={news.image}
->>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588
                     alt={news.title}
                     className="admin-news-image"
                   />
@@ -119,11 +113,7 @@ const AdminNews = () => {
                     <Button
                       size="sm"
                       className="btn-delete-mini"
-<<<<<<< HEAD
                       onClick={() => openDeleteModal(news)}
-=======
-                      onClick={() => handleDelete(news.news_id)}
->>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588
                     >
                       ลบ
                     </Button>

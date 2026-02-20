@@ -136,8 +136,4 @@ export default function AdminSettings() {
             </Row>
         </Container>
     );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 79f97e9d02b6ac2f102e7c4299ced6e5d7854588

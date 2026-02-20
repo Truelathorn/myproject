@@ -1,100 +1,161 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Container, Row, Col, Card, Form, Button, Modal } from "react-bootstrap";
 
-export default function AdminUserEdit() {
-  const { id } = useParams(); // 👈 id จาก url
+const AdminUserEditMock = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  // 🔹 mock data
   const [form, setForm] = useState({
-    username: "",
-    email: "",
-    role: "",
+    username: "mock_user",
+    email: "mock@email.com",
+    role: "user",
   });
 
-  const [loading, setLoading] = useState(true);
-
-  // 🔹 ดึงข้อมูลเดิมมาแสดง
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(`/api/admin/users/${id}`);
-        setForm({
-          username: res.data.username,
-          email: res.data.email,
-          role: res.data.role,
-        });
-      } catch (err) {
-        console.error(err);
-        alert("ไม่พบข้อมูลผู้ใช้");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [id]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // 🔹 handle input
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  // 🔹 submit แก้ไข
-  const handleSubmit = async (e) => {
+  // 🔹 เปิด confirm modal
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await axios.put(`/api/admin/users/${id}`, form);
-      alert("แก้ไขข้อมูลสำเร็จ");
-      navigate("/admin/users");
-    } catch (err) {
-      console.error(err);
-      alert("แก้ไขไม่สำเร็จ");
-    }
+    setShowConfirm(true);
   };
 
-  if (loading) return <p>กำลังโหลดข้อมูล...</p>;
+  // 🔹 mock submit จริง
+  const submitEdit = () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      console.log("Mock submit data:", {
+        id,
+        ...form,
+      });
+
+      alert("Mock: บันทึกการแก้ไขเรียบร้อยแล้ว");
+      setLoading(false);
+      setShowConfirm(false);
+      navigate("/admin/users");
+    }, 800);
+  };
 
   return (
-    <div className="admin-edit">
-      <h2>แก้ไขผู้ใช้</h2>
-
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username
-          <input
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Email
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-        </label>
-
-        <label>
-          Role
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
+    <Container className="my-5">
+      <Row className="justify-content-center">
+        <Col md={6}>
+          <Card
+            style={{
+              border: "2px solid #FF7F11",
+            }}
           >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
+            <Card.Body>
+              <Card.Title>แก้ไขผู้ใช้</Card.Title>
+              <Card.Subtitle className="mb-3 text-muted">
+                User ID: {id}
+              </Card.Subtitle>
 
-        <button type="submit">บันทึกการแก้ไข</button>
-      </form>
-    </div>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    name="username"
+                    value={form.username}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Role</Form.Label>
+                  <Form.Select
+                    name="role"
+                    value={form.role}
+                    onChange={handleChange}
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </Form.Select>
+                </Form.Group>
+
+                <div className="d-flex justify-content-end gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate("/admin/users")}
+                  >
+                    ยกเลิก
+                  </Button>
+                  <Button type="submit">
+                    บันทึก
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Confirm Modal */}
+      <Modal
+        show={showConfirm}
+        onHide={() => setShowConfirm(false)}
+        centered
+      >
+        <div
+          style={{
+            border: "2px solid #FF7F11",
+            borderRadius: "8px",
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>ยืนยันการแก้ไข</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            คุณต้องการบันทึกการแก้ไขข้อมูลผู้ใช้นี้ใช่หรือไม่?
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowConfirm(false)}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              style={{
+                backgroundColor: "#FF7F11",
+                borderColor: "#FF7F11",
+              }}
+              onClick={submitEdit}
+              disabled={loading}
+            >
+              {loading ? "กำลังบันทึก..." : "ยืนยัน"}
+            </Button>
+          </Modal.Footer>
+        </div>
+      </Modal>
+    </Container>
   );
-}
+};
+
+export default AdminUserEditMock;

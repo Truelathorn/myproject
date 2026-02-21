@@ -10,7 +10,8 @@ import Myprofile from './pages/Myprofile';
 import Membership from "./pages/Membership";
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
+import ForgotPassword from './pages/ForgotPassword';
+import Home from './pages/Home';
 
 // หน้า Admin
 import DashBoard from './pages/admin/DashBoard';
@@ -50,12 +51,14 @@ function App() {
               </>
             }
           />
+          <Route path="/" element={<Home />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:newsId" element={<NewsDetail />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/package" element={<Packages />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* หน้า User protected ด้วย PrivateRoute */}
           <Route

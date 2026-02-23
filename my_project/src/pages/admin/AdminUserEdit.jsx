@@ -1,22 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Form, Button, Modal } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Modal,
+  Spinner
+} from "react-bootstrap";
+import Cookies from "js-cookie";
 
-const AdminUserEditMock = () => {
+const AdminUserEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const token = Cookies.get("token");
 
-  // 🔹 mock data
   const [form, setForm] = useState({
-    username: "mock_user",
-    email: "mock@email.com",
+    username: "",
+    email: "",
     role: "user",
   });
 
+  const [loadingPage, setLoadingPage] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  // 🔹 handle input
+  // ================= FETCH USER =================
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/api/v1/admin/users/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error();
+
+        const data = await res.json();
+
+        setForm({
+          username: data.username || "",
+          email: data.email || "",
+          role: data.role || "user",
+        });
+      } catch (err) {
+        alert("ไม่พบข้อมูลผู้ใช้");
+        navigate("/admin/users");
+      } finally {
+        setLoadingPage(false);
+      }
+    };
+
+    fetchUser();
+  }, [id, token, navigate]);
+
+  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -25,38 +69,54 @@ const AdminUserEditMock = () => {
     }));
   };
 
-  // 🔹 เปิด confirm modal
+  // ================= SUBMIT =================
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowConfirm(true);
   };
 
-  // 🔹 mock submit จริง
-  const submitEdit = () => {
-    setLoading(true);
+  const submitEdit = async () => {
+    try {
+      setLoadingSubmit(true);
 
-    setTimeout(() => {
-      console.log("Mock submit data:", {
-        id,
-        ...form,
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/v1/admin/users/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
-      alert("Mock: บันทึกการแก้ไขเรียบร้อยแล้ว");
-      setLoading(false);
-      setShowConfirm(false);
+      if (!res.ok) throw new Error();
+
+      alert("บันทึกการแก้ไขเรียบร้อยแล้ว");
       navigate("/admin/users");
-    }, 800);
+    } catch {
+      alert("เกิดข้อผิดพลาดในการแก้ไข");
+    } finally {
+      setLoadingSubmit(false);
+      setShowConfirm(false);
+    }
   };
+
+  // ================= LOADING PAGE =================
+  if (loadingPage) {
+    return (
+      <div className="text-center mt-5">
+        <Spinner animation="border" />
+      </div>
+    );
+  }
 
   return (
     <Container className="my-5">
       <Row className="justify-content-center">
         <Col md={6}>
-          <Card
-            style={{
-              border: "2px solid #FF7F11",
-            }}
-          >
+          <Card style={{ border: "2px solid #FF7F11" }}>
             <Card.Body>
               <Card.Title>แก้ไขผู้ใช้</Card.Title>
               <Card.Subtitle className="mb-3 text-muted">
@@ -94,6 +154,7 @@ const AdminUserEditMock = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="fitness_staff">Staff</option>
                   </Form.Select>
                 </Form.Group>
 
@@ -114,18 +175,13 @@ const AdminUserEditMock = () => {
         </Col>
       </Row>
 
-      {/* Confirm Modal */}
+      {/* CONFIRM MODAL */}
       <Modal
         show={showConfirm}
         onHide={() => setShowConfirm(false)}
         centered
       >
-        <div
-          style={{
-            border: "2px solid #FF7F11",
-            borderRadius: "8px",
-          }}
-        >
+        <div style={{ border: "2px solid #FF7F11", borderRadius: "8px" }}>
           <Modal.Header closeButton>
             <Modal.Title>ยืนยันการแก้ไข</Modal.Title>
           </Modal.Header>
@@ -147,9 +203,9 @@ const AdminUserEditMock = () => {
                 borderColor: "#FF7F11",
               }}
               onClick={submitEdit}
-              disabled={loading}
+              disabled={loadingSubmit}
             >
-              {loading ? "กำลังบันทึก..." : "ยืนยัน"}
+              {loadingSubmit ? "กำลังบันทึก..." : "ยืนยัน"}
             </Button>
           </Modal.Footer>
         </div>
@@ -158,4 +214,4 @@ const AdminUserEditMock = () => {
   );
 };
 
-export default AdminUserEditMock;
+export default AdminUserEdit;

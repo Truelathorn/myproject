@@ -78,8 +78,9 @@ func SetupRoutes(r *gin.Engine) {
 			admin.Use(middleware.RequireRoles("admin"))
 			{
 				admin.GET("/users", controllers.GetUsers)
-				//admin.PUT("/users/:id", controllers.UpdateUser)
-				//admin.DELETE("/users/:id", controllers.DeleteUser)
+				admin.GET("/users/:id", controllers.GetUserByID)
+				admin.PUT("/users/:id", controllers.UpdateUser)
+				admin.DELETE("/users/:id", controllers.DeleteUser)
 			}
 
 			// 🏋️‍♂️ Classes (admin, fitness_staff)

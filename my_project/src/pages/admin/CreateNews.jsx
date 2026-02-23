@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Card, Modal, Alert } from 'react-bootstrap';
 import axiosInstance from '../../axiosInstance';
 
 const CreateNews = () => {
@@ -12,6 +12,10 @@ const CreateNews = () => {
   const today = new Date().toISOString().split('T')[0];
   const [publishDate, setPublishDate] = useState(today);
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [message, setMessage] = useState('');
+  const [variant, setVariant] = useState('success');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,8 +26,15 @@ const CreateNews = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e) => {
+  // เปิด modal ยืนยัน
+  const handleConfirm = (e) => {
     e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  // บันทึกจริง
+  const handleSubmit = async () => {
+    setLoading(true);
 
     const formData = new FormData();
     formData.append('title', title);
@@ -37,10 +48,20 @@ const CreateNews = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      alert('เพิ่มข่าวเรียบร้อยแล้ว');
-      navigate('/admin/news');
+
+      setVariant('success');
+      setMessage('เพิ่มข่าวเรียบร้อยแล้ว');
+      setShowConfirm(false);
+
+      setTimeout(() => {
+        navigate('/admin/news');
+      }, 1200);
     } catch {
-      alert('เพิ่มข่าวไม่สำเร็จ');
+      setVariant('danger');
+      setMessage('เพิ่มข่าวไม่สำเร็จ');
+      setShowConfirm(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +77,6 @@ const CreateNews = () => {
             }}
           >
             <Card.Body className="p-4">
-              {/* Header */}
               <h4 className="mb-1" style={{ color: '#FF7F11' }}>
                 📰 เพิ่มข่าวใหม่
               </h4>
@@ -64,45 +84,41 @@ const CreateNews = () => {
                 ใช้สำหรับประกาศข่าวสารและกิจกรรมของฟิตเนส
               </p>
 
-              <Form onSubmit={handleSubmit}>
-                {/* Title */}
+              {message && (
+                <Alert variant={variant} className="mb-3">
+                  {message}
+                </Alert>
+              )}
+
+              <Form onSubmit={handleConfirm}>
                 <Form.Group className="mb-3">
                   <Form.Label>หัวข้อข่าว</Form.Label>
                   <Form.Control
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="เช่น แจ้งปิดปรับปรุงฟิตเนส"
                     required
                   />
                 </Form.Group>
 
-                {/* Image */}
                 <Form.Group className="mb-3">
                   <Form.Label>รูปภาพประกอบ</Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
+                  <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
                 </Form.Group>
 
                 {preview && (
-                  <div className="mb-3">
-                    <img
-                      src={preview}
-                      alt="preview"
-                      style={{
-                        width: '100%',
-                        maxHeight: 260,
-                        objectFit: 'cover',
-                        borderRadius: 12,
-                        border: '1px solid #eee',
-                      }}
-                    />
-                  </div>
+                  <img
+                    src={preview}
+                    alt="preview"
+                    className="mb-3"
+                    style={{
+                      width: '100%',
+                      maxHeight: 260,
+                      objectFit: 'cover',
+                      borderRadius: 12,
+                    }}
+                  />
                 )}
 
-                {/* Content */}
                 <Form.Group className="mb-3">
                   <Form.Label>เนื้อหาข่าว</Form.Label>
                   <Form.Control
@@ -110,20 +126,15 @@ const CreateNews = () => {
                     rows={5}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="รายละเอียดข่าว..."
                     required
                   />
                 </Form.Group>
 
-                {/* Type & Date */}
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>ประเภทข่าว</Form.Label>
-                      <Form.Select
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                      >
+                      <Form.Select value={type} onChange={(e) => setType(e.target.value)}>
                         <option value="general">ทั่วไป</option>
                         <option value="health">สุขภาพ</option>
                       </Form.Select>
@@ -143,21 +154,13 @@ const CreateNews = () => {
                   </Col>
                 </Row>
 
-                {/* Actions */}
-                <div className="d-flex justify-content-end gap-2 mt-3">
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => navigate('/admin/news')}
-                  >
+                <div className="d-flex justify-content-end gap-2">
+                  <Button variant="outline-secondary" onClick={() => navigate('/admin/news')}>
                     ยกเลิก
                   </Button>
                   <Button
                     type="submit"
-                    className="px-4"
-                    style={{
-                      backgroundColor: '#FF7F11',
-                      border: 'none',
-                    }}
+                    style={{ backgroundColor: '#FF7F11', border: 'none' }}
                   >
                     บันทึกข่าว
                   </Button>
@@ -167,6 +170,24 @@ const CreateNews = () => {
           </Card>
         </Col>
       </Row>
+
+      {/* Modal ยืนยัน */}
+      <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>ยืนยันการบันทึก</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          คุณต้องการบันทึกข่าวนี้ใช่หรือไม่?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirm(false)}>
+            ยกเลิก
+          </Button>
+          <Button variant="success" onClick={handleSubmit} disabled={loading}>
+            {loading ? 'กำลังบันทึก...' : 'ยืนยัน'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
